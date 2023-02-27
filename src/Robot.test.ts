@@ -80,6 +80,30 @@ describe("Robot", () => {
         new ForwardInstruction(), // 7,5,E
       ],
     },
+    {
+      initialPosition: {
+        xCoordinate: 0,
+        yCoordinate: 3,
+        orientation: Orientation.West,
+      },
+      expectedPosition: {
+        xCoordinate: 2,
+        yCoordinate: 4,
+        orientation: Orientation.South,
+      },
+      instructions: [
+        new LeftInstruction(),
+        new LeftInstruction(),
+        new ForwardInstruction(),
+        new ForwardInstruction(),
+        new ForwardInstruction(),
+        new LeftInstruction(),
+        new ForwardInstruction(),
+        new LeftInstruction(),
+        new ForwardInstruction(),
+        new LeftInstruction(),
+      ],
+    },
   ])(
     "given initial position of $initialPosition, it changes position $expectedPosition for sequence of instructions: $instructions",
     ({ expectedPosition, initialPosition, instructions }) => {

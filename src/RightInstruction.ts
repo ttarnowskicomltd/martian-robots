@@ -1,4 +1,4 @@
-import { Orientation, RobotInstruction, RobotPosition } from "./Robot";
+import { Orientation, RobotInstruction, RobotPosition } from "./RobotUnit";
 
 export class RightInstruction implements RobotInstruction {
   run(position: RobotPosition): RobotPosition {

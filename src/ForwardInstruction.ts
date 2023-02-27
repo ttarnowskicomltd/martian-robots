@@ -1,4 +1,4 @@
-import { Orientation, RobotInstruction, RobotPosition } from "./Robot";
+import { Orientation, RobotInstruction, RobotPosition } from "./RobotUnit";
 
 export class ForwardInstruction implements RobotInstruction {
   run(position: RobotPosition): RobotPosition {

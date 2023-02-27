@@ -2,6 +2,17 @@ import { run } from ".";
 
 describe("Transmitter", () => {
   describe("transmit", () => {
+    it("returns output with LOST information if robot went off the grid", () => {
+      const input = `2 2
+1 1 N
+FF`;
+      const expectedOutput = "1 2 N LOST";
+
+      const actualOutput = run(input);
+
+      expect(actualOutput).toEqual(expectedOutput);
+    });
+
     it("returns expected output for exercise's input", () => {
       const input = `5 3
 1 1 E
