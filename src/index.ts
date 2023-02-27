@@ -9,6 +9,13 @@ import {
   RobotUnit,
 } from "./RobotUnit";
 
+type GridConstraints = {
+  gridMinX: number;
+  gridMinY: number;
+  gridMaxX: number;
+  gridMaxY: number;
+};
+
 type ProcessRobotInstructionsResult = {
   position: RobotPosition;
   isLost: boolean;
@@ -17,10 +24,7 @@ type ProcessRobotInstructionsResult = {
 const processRobotInstructions = (
   robot: Robot,
   lostPositions: RobotPosition[],
-  gridMinX: number,
-  gridMinY: number,
-  gridMaxX: number,
-  gridMaxY: number,
+  gridConstraints: GridConstraints,
   instructions: RobotInstruction[]
 ): ProcessRobotInstructionsResult => {
   if (instructions.length < 1) {
@@ -44,10 +48,10 @@ const processRobotInstructions = (
     robot.sendInstruction(instruction);
 
     if (
-      robot.getCurrentPosition().xCoordinate > gridMaxX ||
-      robot.getCurrentPosition().xCoordinate < gridMinX ||
-      robot.getCurrentPosition().yCoordinate > gridMaxY ||
-      robot.getCurrentPosition().yCoordinate < gridMinY
+      robot.getCurrentPosition().xCoordinate > gridConstraints.gridMaxX ||
+      robot.getCurrentPosition().xCoordinate < gridConstraints.gridMinX ||
+      robot.getCurrentPosition().yCoordinate > gridConstraints.gridMaxY ||
+      robot.getCurrentPosition().yCoordinate < gridConstraints.gridMinY
     ) {
       lostPositions.push(lastRobotPosition);
       return { position: lastRobotPosition, isLost: true };
@@ -57,28 +61,38 @@ const processRobotInstructions = (
   return { position: robot.getCurrentPosition(), isLost: false };
 };
 
-export const run = (input: string): string => {
+const extractGridConstraints = (input: string): GridConstraints => {
   const initialLinePos = input.indexOf("\n");
+
   const [gridMaxX, gridMaxY] = input
     .substring(0, initialLinePos)
     .split(" ")
     .map((s) => parseInt(s));
-  const [gridMinX, gridMinY] = [0, 0];
 
-  const sequences = input.substring(initialLinePos + 1).split("\n\n");
+  return {
+    gridMaxX,
+    gridMaxY,
+    gridMinX: 0,
+    gridMinY: 0,
+  };
+};
 
-  const lostPositions = [] as RobotPosition[];
-  const processRobotInstructionsResults =
-    [] as ProcessRobotInstructionsResult[];
+const extractInitialPositionAnInstructionsPairs = (
+  input: string
+): [RobotPosition, RobotInstruction[]][] => {
+  const sequences = input.substring(input.indexOf("\n") + 1).split("\n\n");
 
-  sequences.forEach((sequence) => {
+  return sequences.map((sequence) => {
     const [initialPositionString, instructionsString] = sequence.split("\n");
+
     const [x, y, o] = initialPositionString.split(" ");
+
     const initialPosition: RobotPosition = {
       xCoordinate: parseInt(x),
       yCoordinate: parseInt(y),
       orientation: o as Orientation,
     };
+
     const instructions = instructionsString
       .split("")
       .reduce((instructions, instructionString) => {
@@ -97,20 +111,29 @@ export const run = (input: string): string => {
         return instructions;
       }, [] as RobotInstruction[]);
 
-    const robot = new Robot(initialPosition);
-
-    processRobotInstructionsResults.push(
-      processRobotInstructions(
-        robot,
-        lostPositions,
-        gridMinX,
-        gridMinY,
-        gridMaxX,
-        gridMaxY,
-        instructions
-      )
-    );
+    return [initialPosition, instructions];
   });
+};
+
+export const run = (input: string): string => {
+  const gridConstraints = extractGridConstraints(input);
+  const initialPositionAnInstructionsPairs =
+    extractInitialPositionAnInstructionsPairs(input);
+
+  const lostPositions = [] as RobotPosition[];
+  const processRobotInstructionsResults =
+    initialPositionAnInstructionsPairs.map(
+      ([initialPosition, instructions]) => {
+        const robot = new Robot(initialPosition);
+
+        return processRobotInstructions(
+          robot,
+          lostPositions,
+          gridConstraints,
+          instructions
+        );
+      }
+    );
 
   const output = processRobotInstructionsResults
     .map((current) => {
