@@ -31,13 +31,67 @@ For each robot position/instruction in the input, the output should indicate the
 
 #### Sample Input
 
-53
-1 1 E RFRFRFRF
-3 2 N FRRFLLFFRRFLL
-0 3 W LLFFFLFLFL
+5 3
+
+1 1 E
+RFRFRFRF
+
+3 2 N
+FRRFLLFFRRFLL
+
+0 3 W
+LLFFFLFLFL
 
 #### Sample Output
 
 1 1 E
 3 3 N LOST
 2 3 S
+
+## Installation
+
+```
+npm install
+```
+
+or
+
+```
+yarn install
+```
+
+## Usage
+
+Start the app:
+
+```
+npm run dev
+```
+
+or
+
+```
+yarn dev
+```
+
+You can send commands via curl:
+
+```
+curl -X POST -H "content-type: text/plain" --data '2 2
+1 1 N
+FF' localhost:3000/trasmit
+```
+
+## Tests
+
+Run:
+
+```
+npm test
+```
+
+or
+
+```
+yarn test
+```

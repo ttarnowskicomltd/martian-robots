@@ -1,6 +1,8 @@
-import { run } from ".";
+import { Transmitter } from "./Transmitter";
 
 describe("Transmitter", () => {
+  const transmitter = new Transmitter();
+
   describe("transmit", () => {
     it("returns output with LOST information if robot went off the grid", () => {
       const input = `2 2
@@ -8,7 +10,7 @@ describe("Transmitter", () => {
 FF`;
       const expectedOutput = "1 2 N LOST";
 
-      const actualOutput = run(input);
+      const actualOutput = transmitter.transmit(input);
 
       expect(actualOutput).toEqual(expectedOutput);
     });
@@ -28,7 +30,7 @@ LLFFFLFLFL`;
 3 3 N LOST
 2 3 S`;
 
-      const actualOutput = run(input);
+      const actualOutput = transmitter.transmit(input);
 
       expect(actualOutput).toEqual(expectedOutput);
     });
